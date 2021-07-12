@@ -33,7 +33,7 @@ var loadTasks = function() {
 
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    console.log(list, arr);
+    //console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
@@ -45,8 +45,61 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+//MY CODE HERE:
+//FUNCTION listener for text area 
+$(".list-group").on("click", "p", function() {
+  var text = $(this).text().trim();
+  var textInput = $("<textarea>").addClass("form-control").val(text);
+  $(this).replaceWith(textInput);
+  textInput.trigger("focus");
 
+  //nested blur function listener...for some reasont his works unlike how the module says to have them seperate but whatever for now
+  $(".list-group").on("blur", "textarea", function() {
+  // get the textarea current value/text
+    var text = $(this).val().trim();
+  // get the parent ul id attribute
+    var status = $(this).closest(".list-group").attr("id").replace("list-", "");
+  // get the task position in the list of other li elements
+    var index = $(this).closest(".list-group-item").index();
+    tasks[status][index].text = text;
+    saveTasks();
+    // recreate p element
+var taskP = $("<p>").addClass("m-1").text(text);
 
+// replace textarea with p element
+$(this).replaceWith(taskP);
+  });
+});
+
+//MY CODE HERE:
+//FUNCTION listener for due date click 
+$(".list-group").on("click", "span", function(){
+  //get current text
+  var date = $(this).text().trim();
+  //make new input el
+  var dateInput = $("<input>").attr("type", "text").addClass("form-control").val(date);
+  //swap the elements
+  $(this).replaceWith(dateInput);
+  //focus on a new element
+  dateInput.trigger("focus");
+
+  //nested blur listener see of this works aginayayy
+  $(".list-group").on("blur", "input[type = 'text']", function(){
+    //get current text
+    var date = $(this).val().trim();
+    //get parent ul id attr
+    var status = $(this).closest(".list-group").attr("id").replace("list-", "");
+    //get task position in li list
+    var index = $(this).closest(".list-group-item").index();
+    //update task in arr and resave to localstorage
+    tasks[status][index].date = date;
+    saveTasks();
+    //recreate span el w/ boostrap classes
+    var taskSpan = $("<span>").addClass("badge badge-primary badge-pill").text(date);
+    //replace input w span el
+    $(this).replaceWith(taskSpan);
+  });
+});
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
