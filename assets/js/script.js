@@ -45,60 +45,60 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-//MY CODE HERE:
-//FUNCTION listener for text area 
-$(".list-group").on("click", "p", function() {
-  var text = $(this).text().trim();
-  var textInput = $("<textarea>").addClass("form-control").val(text);
-  $(this).replaceWith(textInput);
-  textInput.trigger("focus");
-
-  //nested blur function listener...for some reasont his works unlike how the module says to have them seperate but whatever for now
-  $(".list-group").on("blur", "textarea", function() {
-  // get the textarea current value/text
-    var text = $(this).val().trim();
-  // get the parent ul id attribute
-    var status = $(this).closest(".list-group").attr("id").replace("list-", "");
-  // get the task position in the list of other li elements
-    var index = $(this).closest(".list-group-item").index();
-    tasks[status][index].text = text;
+//MY CODE HERE:////////////////////////////
+//method for dragging tasks into new categories
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  //tells jquery to make a copy of drag el and move the copy
+  herlper: "clone",
+  activate: function(event, ui){
+    console.log(ui);
+  },
+  deactiviate: function(event, ui){
+    console.log(ui);
+  },
+  over: function(event){
+    console.log(event);
+  },
+  out: function(event){
+    console.log(event);
+  },
+  update: function(event){
+    var tempArr  = [];
+    //loop thru current children in sortable list
+    $(this).children().each(function(){
+      //set values in temp arr[] & add task data to temp arr as a object
+      tempArr.push({
+        text: $(this).find("p").text().trim(),
+        date: $(this).find("span").text().trim()
+      });
+    });
+    //trim lists id to match object property
+    var arrName = $(this).attr("id").replace("list", "");
+    //update arr on tasks object and save it
+    tasks[arrName] =tempArr;
     saveTasks();
-    // recreate p element
-var taskP = $("<p>").addClass("m-1").text(text);
-
-// replace textarea with p element
-$(this).replaceWith(taskP);
-  });
+  },
+    stop: function(event){
+      $(this).removeClass("dropover");
+  }
 });
 
-//MY CODE HERE:
-//FUNCTION listener for due date click 
-$(".list-group").on("click", "span", function(){
-  //get current text
-  var date = $(this).text().trim();
-  //make new input el
-  var dateInput = $("<input>").attr("type", "text").addClass("form-control").val(date);
-  //swap the elements
-  $(this).replaceWith(dateInput);
-  //focus on a new element
-  dateInput.trigger("focus");
-
-  //nested blur listener see of this works aginayayy
-  $(".list-group").on("blur", "input[type = 'text']", function(){
-    //get current text
-    var date = $(this).val().trim();
-    //get parent ul id attr
-    var status = $(this).closest(".list-group").attr("id").replace("list-", "");
-    //get task position in li list
-    var index = $(this).closest(".list-group-item").index();
-    //update task in arr and resave to localstorage
-    tasks[status][index].date = date;
-    saveTasks();
-    //recreate span el w/ boostrap classes
-    var taskSpan = $("<span>").addClass("badge badge-primary badge-pill").text(date);
-    //replace input w span el
-    $(this).replaceWith(taskSpan);
-  });
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  //delete task
+  drop: function(event, ui){
+    ui.draggable.remove();
+  },
+  over: function(event, ui){
+    console.log(ui);
+  },
+  out: function(event, ui){
+    console.log(ui);
+  }
 });
 
 // modal was triggered
@@ -135,6 +135,65 @@ $("#task-form-modal .btn-primary").click(function() {
   }
 });
 
+  //FUNCTION listener for text area 
+$(".list-group").on("click", "p", function() {
+  var text = $(this).text().trim();
+  var textInput = $("<textarea>").addClass("form-control").val(text);
+  $(this).replaceWith(textInput);
+  textInput.trigger("focus");
+});
+  
+  $(".list-group").on("blur", "textarea", function() {
+    // get the textarea current value/text
+      var text = $(this).val();
+    // get the parent ul id attribute
+      var status = $(this).closest(".list-group").attr("id").replace("list-", "");
+    // get the task position in the list of other li elements
+      var index = $(this).closest(".list-group-item").index();
+      tasks[status][index].text = text;
+      saveTasks();
+      // recreate p element
+  var taskP = $("<p>").addClass("m-1").text(text);  
+  // replace textarea with p element
+  $(this).replaceWith(taskP);
+  });
+
+  //FUNCTION listener for due date click 
+$(".list-group").on("click", "span", function(){
+  //get current text
+  var date = $(this).text().trim();
+  //make new input el
+  var dateInput = $("<input>").attr("type", "text").addClass("form-control").val(date);
+  //swap the elements
+  $(this).replaceWith(dateInput);
+  //focus on a new element
+  dateInput.trigger("focus");
+}); 
+
+// value of due date was changed
+$(".list-group").on("change", "input[type='text']", function() {
+  var date = $(this).val();
+
+  // get status type and position in the list
+  var status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
+
+  // update task in array and re-save to localstorage
+  tasks[status][index].date = date;
+  saveTasks();
+
+  // recreate span and insert in place of input element
+  var taskSpan = $("<span>")
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
+    $(this).replaceWith(taskSpan);
+});
+
 // remove all tasks
 $("#remove-tasks").on("click", function() {
   for (var key in tasks) {
@@ -144,53 +203,5 @@ $("#remove-tasks").on("click", function() {
   saveTasks();
 });
 
-// load tasks for the first time
+//load tasks for the first time
 loadTasks();
-//method for dragging tasks into new categories
-$(".card .list-group").sortable({
-  connectWith: $(".card .list-group"),
-  scroll: false,
-  tolerance: "pointer",
-  //tells jquery to make a copy of drag el and move the copy
-  herlper: "clone",
-  activate: function(event){
-    console.log("activate", this);
-  },
-  deactiviate: function(event){
-    console.log("deactivate", this);
-  },
-  over: function(event){
-    console.log("over", event.target);
-  },
-  update: function(event){
-    var tempArr  = [];
-    //loop thru current children in sortable list
-    $(this).children().each(function(){
-      var text = $(this).find("p").text().trim();
-      var date = $(this).find("span").text().trim();
-      //add task data to temp arr as a object
-      tempArr.push({
-        text:text,
-        date: date
-      });
-    });
-    //trim lists id to match object property
-    var arrName = $(this).attr("id").replace("list", "");
-    //update arr on tasks object and save it
-    tasks[arrName] =tempArr;
-    saveTasks();
-  }
-});
-
-$("#trash").droppable({
-  accept: ".card .list-group-item",
-  tolerance: "touch",
-  //delete task
-  drop: function(event, ui){
-    ui.draggable.remove();
-    console.log("over");
-  },
-  out: function(event, ui){
-    console.log("out");
-  }
-});
