@@ -146,5 +146,51 @@ $("#remove-tasks").on("click", function() {
 
 // load tasks for the first time
 loadTasks();
+//method for dragging tasks into new categories
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  //tells jquery to make a copy of drag el and move the copy
+  herlper: "clone",
+  activate: function(event){
+    console.log("activate", this);
+  },
+  deactiviate: function(event){
+    console.log("deactivate", this);
+  },
+  over: function(event){
+    console.log("over", event.target);
+  },
+  update: function(event){
+    var tempArr  = [];
+    //loop thru current children in sortable list
+    $(this).children().each(function(){
+      var text = $(this).find("p").text().trim();
+      var date = $(this).find("span").text().trim();
+      //add task data to temp arr as a object
+      tempArr.push({
+        text:text,
+        date: date
+      });
+    });
+    //trim lists id to match object property
+    var arrName = $(this).attr("id").replace("list", "");
+    //update arr on tasks object and save it
+    tasks[arrName] =tempArr;
+    saveTasks();
+  }
+});
 
-
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  //delete task
+  drop: function(event, ui){
+    ui.draggable.remove();
+    console.log("over");
+  },
+  out: function(event, ui){
+    console.log("out");
+  }
+});
