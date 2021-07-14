@@ -31,7 +31,7 @@
         <!--to do start-->
         <div class="col-12 col-md-6 col-xl-3 mb-3">
           <div class = "card">
-            <h4 class="card-header bg-dark text-light">
+            <h4 class="card-header bg-dark text-light d-flex align-items-center">
               To Do
             </h4>
             <ul id="list-toDo" class="list-group list-group-flush">
@@ -42,7 +42,7 @@
       <!--in progress start-->
       <div class="col-12 col-md-6 col-xl-3 mb-3">
         <div class="card">
-          <h4 class= "card-header bg-dark text-light">
+          <h4 class= "card-header bg-dark text-light d-flex align-items-center">
             In progress
           </h4>
           <ul id="list-inProgress" class = "list-group list-group-flush">
@@ -53,7 +53,7 @@
       <!--in review start-->
       <div class = "col-12 col-md-6 col-xl-3 mb-3">
         <div class="card">
-          <h4 class = "card-header bg-dark text-light">
+          <h4 class = "card-header bg-dark text-light d-flex align-items-center">
             In Review
           </h4>
           <ul id="list-inReview" class = "list-group list-group-flush">
@@ -64,7 +64,7 @@
       <!--tasks done start-->
       <div class="col-12 col-md-6 col-xl-3 mb-3">
         <div class="card">
-          <h4 class = "card-header bg-dark text-light">
+          <h4 class = "card-header bg-dark text-light d-flex align-items-center">
             Done
           </h4>
           <ul id="list-done" class = "list-group list-group-flush">        
@@ -75,11 +75,11 @@
     </div>
     <!--remove task footer-->
         <!--mt-auto class will push remove button to the buttom-->
-    <div id="trash" class = "mt-auto">
+    <footer id="trash" class = "mt-auto">
       <div class="w-100 bg-danger text-center text-light display-4">
-        <span>Drop Here to Remove</span>
+        <span class ="io-trash mx-auto mb-4"></span>Drop Here to Remove
       </div>
-    </div>
+    </footer>
     </main>
   
 
@@ -121,6 +121,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!--moment cdn here-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
   <script src="./assets/js/script.js"></script>
 </body>
 
